@@ -22,8 +22,7 @@ defmodule BankooWeb.Router do
 
     get "/", PageController, :home
 
-    live "/transactions", TransactionLive.Index, :index
-    live "/transactions/new", TransactionLive.Index, :new
+
     live "/transactions/:id/edit", TransactionLive.Index, :edit
 
     live "/transactions/:id", TransactionLive.Show, :show
@@ -75,6 +74,8 @@ defmodule BankooWeb.Router do
       on_mount: [{BankooWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/transactions", TransactionLive.Index
     end
   end
 

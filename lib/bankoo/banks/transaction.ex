@@ -4,15 +4,15 @@ defmodule Bankoo.Banks.Transaction do
 
   schema "transactions" do
 
-    field :user_id, :id
+    belongs_to :user, Bankoo.Accounts.User
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(transaction, attrs) do
+  def changeset(transaction, attrs \\ %{}) do
     transaction
-    |> cast(attrs, [])
+    |> cast(attrs, [:user_id])
     |> validate_required([])
   end
 end

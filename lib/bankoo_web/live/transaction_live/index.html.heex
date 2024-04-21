@@ -1,40 +1,26 @@
-<.header>
-  Listing Transactions
-  <:actions>
-    <.link patch={~p"/transactions/new"}>
-      <.button>New Transaction</.button>
-    </.link>
-  </:actions>
-</.header>
+<h1 class="text-2xl font-bold">Transações</h1>
 
-<.table
-  id="transactions"
-  rows={@streams.transactions}
-  row_click={fn {_id, transaction} -> JS.navigate(~p"/transactions/#{transaction}") end}
->
-  <:action :let={{_id, transaction}}>
-    <div class="sr-only">
-      <.link navigate={~p"/transactions/#{transaction}"}>Show</.link>
+<.form for={@form} phx-submit="submit">
+  <div class="flex gap-2 items-end">
+    <div class="grow">
+      <.input field={@form[:user_id]} type="hidden" />
     </div>
-    <.link patch={~p"/transactions/#{transaction}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, transaction}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: transaction.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
-    </.link>
-  </:action>
-</.table>
 
-<.modal :if={@live_action in [:new, :edit]} id="transaction-modal" show on_cancel={JS.patch(~p"/transactions")}>
-  <.live_component
-    module={BankooWeb.TransactionLive.FormComponent}
-    id={@transaction.id || :new}
-    title={@page_title}
-    action={@live_action}
-    transaction={@transaction}
-    patch={~p"/transactions"}
-  />
-</.modal>
+    <button class="bg-black border border-black hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-md">
+        Transferir
+    </button>
+  </div>
+</.form>
+
+<div class="divide-y">
+  <div :for={transaction <- @transactions} class="py-2">
+    <div>
+      <div class="font-bold"><%= transaction.id %></div>
+      <div><%= transaction.user_id %></div>
+      <div class="text-sm"><%= transaction.inserted_at %></div>
+      <button class="text-sm" type="button" phx-click="delete" phx-value-id={transaction.id}>
+        <.icon name="hero-trash" class="h-4 w-4" />
+      </button>
+    </div>
+  </div>  
+</div>

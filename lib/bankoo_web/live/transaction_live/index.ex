@@ -2,46 +2,49 @@ defmodule BankooWeb.TransactionLive.Index do
   use BankooWeb, :live_view
 
   alias Bankoo.Banks
-  alias Bankoo.Banks.Transaction
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :transactions, Banks.list_transactions())}
+    user_id = socket.assigns.current_user.id
+    changeset = Banks.Transaction.changeset(%Banks.Transaction{})
+
+    IO.inspect(user_id, label: "print user_id do mount")
+    socket =
+      socket
+      |> assign(:transactions, Banks.list_transactions(user_id))
+      |> assign(
+        :form,
+        to_form(changeset)
+      )
+
+    {:ok, socket}
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  def handle_event("submit", %{"transaction" => transaction_params}, socket) do
+    params =
+      transaction_params
+      |> Map.put("user_id", socket.assigns.current_user.id)
+
+    IO.inspect(params, label: "print params do submit")
+    case Banks.create_transaction(params) do
+      {:ok, transaction} ->
+        socket =
+          socket
+          |> assign(:transactions, [transaction | socket.assigns.transactions])
+
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        socket =
+          socket
+          |> assign(
+            :form,
+            to_form(changeset)
+          )
+
+        {:noreply, socket}
+    end
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Transaction")
-    |> assign(:transaction, Banks.get_transaction!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Transaction")
-    |> assign(:transaction, %Transaction{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Transactions")
-    |> assign(:transaction, nil)
-  end
-
-  @impl true
-  def handle_info({BankooWeb.TransactionLive.FormComponent, {:saved, transaction}}, socket) do
-    {:noreply, stream_insert(socket, :transactions, transaction)}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    transaction = Banks.get_transaction!(id)
-    {:ok, _} = Banks.delete_transaction(transaction)
-
-    {:noreply, stream_delete(socket, :transactions, transaction)}
-  end
 end
