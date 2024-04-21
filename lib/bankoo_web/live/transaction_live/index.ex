@@ -47,4 +47,16 @@ defmodule BankooWeb.TransactionLive.Index do
     end
   end
 
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    transaction = Banks.get_transaction!(id)
+    {:ok, _} = Banks.delete_transaction(transaction)
+
+    socket =
+      socket
+      |> assign(:transactions, Banks.list_transactions())
+
+    {:noreply, socket}
+  end
+
 end

@@ -13,6 +13,6 @@ defmodule Bankoo.Banks.Transaction do
   def changeset(transaction, attrs \\ %{}) do
     transaction
     |> cast(attrs, [:user_id])
-    |> validate_required([])
+    |> validate_required([:user_id])
   end
 end
