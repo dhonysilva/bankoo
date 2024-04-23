@@ -1,3 +1,4 @@
+# mix phx.gen.live Banks Entry entries transaction_id:references:transactions user_id:integer type:enum:credit:debit amount:integer
 defmodule Bankoo.Repo.Migrations.CreateEntries do
   use Ecto.Migration
 

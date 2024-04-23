@@ -1,9 +1,11 @@
-<h1 class="text-2xl font-bold">Transações</h1>
+<h1 class="text-2xl font-bold">Bix</h1>
 
 <.form for={@form} phx-submit="submit">
   <div class="flex gap-2 items-end">
     <div class="grow">
       <.input field={@form[:user_id]} type="hidden" />
+      <.input field={@form[:amount]} type="text" label="Digite o valor:" />
+      <.input field={@form[:user_id]} type="text" label="Chave:" />
     </div>
 
     <button class="bg-black border border-black hover:bg-gray-700 text-white font-bold py-2 px-3 rounded-md">
@@ -11,6 +13,8 @@
     </button>
   </div>
 </.form>
+
+<h2 class="text-2xl font-bold">Transações</h2>
 
 <div class="divide-y">
   <div :for={transaction <- @transactions} class="py-2">
