@@ -8,7 +8,6 @@ defmodule BankooWeb.TransactionLive.Index do
     user_id = socket.assigns.current_user.id
     changeset = Banks.Transaction.changeset(%Banks.Transaction{})
 
-    IO.inspect(user_id, label: "print user_id do mount")
     socket =
       socket
       |> assign(:transactions, Banks.list_transactions(user_id))
@@ -26,7 +25,6 @@ defmodule BankooWeb.TransactionLive.Index do
       transaction_params
       |> Map.put("user_id", socket.assigns.current_user.id)
 
-    IO.inspect(params, label: "print params do submit")
     case Banks.create_transaction(params) do
       {:ok, transaction} ->
         socket =
