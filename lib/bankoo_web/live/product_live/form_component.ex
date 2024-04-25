@@ -2,6 +2,7 @@ defmodule BankooWeb.ProductLive.FormComponent do
   use BankooWeb, :live_component
 
   alias Bankoo.Catalog
+  alias Bankoo.Catalog.ProductCategories
 
   @impl true
   def render(assigns) do
@@ -23,6 +24,42 @@ defmodule BankooWeb.ProductLive.FormComponent do
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:price]} type="number" label="Price" step="any" />
         <.input field={@form[:views]} type="number" label="Views" />
+
+        <h1 class="text-md font-semibold leading-8 text-zinc-800">
+          Categories
+        </h1>
+
+        <div id="categories" class="space-y-2">
+          <.inputs_for :let={b_category} field={@form[:product_categories]}>
+            <div class="flex space-x-2 drag-item">
+              <input type="hidden" name="business[categories_order][]" value={b_category.index} />
+
+              <.input
+                type="select"
+                field={b_category[:category_id]}
+                placeholder="Category"
+                options={@categories}
+              />
+
+              <label class="cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="business[categories_delete][]"
+                  value={b_category.index}
+                  class="hidden"
+                />
+                <.icon name="hero-x-mark" class="w-6 h-6 relative top-2" />
+              </label>
+            </div>
+          </.inputs_for>
+        </div>
+        <:actions>
+          <label class="block cursor-pointer">
+            <input type="checkbox" name="business[categories_order][]" class="hidden" />
+            <.icon name="hero-plus-circle" /> add more
+          </label>
+        </:actions>
+
         <:actions>
           <.button phx-disable-with="Saving...">Save Product</.button>
         </:actions>
@@ -39,6 +76,24 @@ defmodule BankooWeb.ProductLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)}
+  end
+
+  defp assign_categories(socket) do
+    categories =
+      Catalog.list_categories()
+      |> Enum.map(&{&1.title, &1.id})
+
+    assign(socket, :categories, categories)
+  end
+
+  def category_opts(changeset) do
+    existing_ids =
+      changeset
+      |> Ecto.Changeset.get_change(:categories, [])
+      |> Enum.map(& &1.data.id)
+
+    for cat <- Bankoo.Catalog.list_categories(),
+        do: [key: cat.title, value: cat.id, selected: cat.id in existing_ids]
   end
 
   @impl true
