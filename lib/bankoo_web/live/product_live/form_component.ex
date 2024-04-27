@@ -88,16 +88,6 @@ defmodule BankooWeb.ProductLive.FormComponent do
     assign(socket, :categories, categories)
   end
 
-  def category_opts(changeset) do
-    existing_ids =
-      changeset
-      |> Ecto.Changeset.get_change(:categories, [])
-      |> Enum.map(& &1.data.id)
-
-    for cat <- Bankoo.Catalog.list_categories(),
-        do: [key: cat.title, value: cat.id, selected: cat.id in existing_ids]
-  end
-
   @impl true
   def handle_event("validate", %{"product" => product_params}, socket) do
     changeset =
