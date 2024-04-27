@@ -133,7 +133,14 @@ defmodule BankooWeb.ProductLive.FormComponent do
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
+    if Ecto.Changeset.get_field(changeset, :product_categories) == [] do
+      product_category = %ProductCategories{}
+
+      changeset = Ecto.Changeset.put_change(changeset, :product_categories, [product_category])
+      assign(socket, :form, to_form(changeset))
+    else
+      assign(socket, :form, to_form(changeset))
+    end
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
