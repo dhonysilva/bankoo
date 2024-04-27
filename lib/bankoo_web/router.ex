@@ -13,6 +13,17 @@ defmodule BankooWeb.Router do
     plug :fetch_current_user
   end
 
+  alias Bankoo.ShoppingCart
+
+  defp fetch_current_cart(conn, _opts) do
+    if cart = ShoppingCart.get_cart_by_user_id(conn.assigns.current_user) do
+      assign(conn, :cart, cart)
+    else
+      {:ok, new_cart} = ShoppingCart.create_cart(conn.assigns.current_user)
+      assign(conn, :cart, new_cart)
+    end
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end

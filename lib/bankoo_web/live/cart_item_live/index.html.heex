@@ -1,0 +1,42 @@
+<.header>
+  Listing Cart items
+  <:actions>
+    <.link patch={~p"/cart_items/new"}>
+      <.button>New Cart item</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="cart_items"
+  rows={@streams.cart_items}
+  row_click={fn {_id, cart_item} -> JS.navigate(~p"/cart_items/#{cart_item}") end}
+>
+  <:col :let={{_id, cart_item}} label="Price when carted"><%= cart_item.price_when_carted %></:col>
+  <:col :let={{_id, cart_item}} label="Quantity"><%= cart_item.quantity %></:col>
+  <:action :let={{_id, cart_item}}>
+    <div class="sr-only">
+      <.link navigate={~p"/cart_items/#{cart_item}"}>Show</.link>
+    </div>
+    <.link patch={~p"/cart_items/#{cart_item}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, cart_item}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: cart_item.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="cart_item-modal" show on_cancel={JS.patch(~p"/cart_items")}>
+  <.live_component
+    module={BankooWeb.CartItemLive.FormComponent}
+    id={@cart_item.id || :new}
+    title={@page_title}
+    action={@live_action}
+    cart_item={@cart_item}
+    patch={~p"/cart_items"}
+  />
+</.modal>

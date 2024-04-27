@@ -1,0 +1,27 @@
+<.header>
+  Cart item <%= @cart_item.id %>
+  <:subtitle>This is a cart_item record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/cart_items/#{@cart_item}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit cart_item</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Price when carted"><%= @cart_item.price_when_carted %></:item>
+  <:item title="Quantity"><%= @cart_item.quantity %></:item>
+</.list>
+
+<.back navigate={~p"/cart_items"}>Back to cart_items</.back>
+
+<.modal :if={@live_action == :edit} id="cart_item-modal" show on_cancel={JS.patch(~p"/cart_items/#{@cart_item}")}>
+  <.live_component
+    module={BankooWeb.CartItemLive.FormComponent}
+    id={@cart_item.id}
+    title={@page_title}
+    action={@live_action}
+    cart_item={@cart_item}
+    patch={~p"/cart_items/#{@cart_item}"}
+  />
+</.modal>

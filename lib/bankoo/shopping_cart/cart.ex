@@ -6,6 +6,8 @@ defmodule Bankoo.ShoppingCart.Cart do
 
     field :user_id, :id
 
+    has_many :items, Bankoo.ShoppingCart.CartItem
+
     timestamps(type: :utc_datetime)
   end
 
