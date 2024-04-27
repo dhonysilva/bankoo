@@ -16,6 +16,7 @@ defmodule BankooWeb.ProductLive.FormComponent do
       <.simple_form
         for={@form}
         id="product-form"
+        multipart
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
@@ -32,7 +33,7 @@ defmodule BankooWeb.ProductLive.FormComponent do
         <div id="categories" class="space-y-2">
           <.inputs_for :let={b_category} field={@form[:product_categories]}>
             <div class="flex space-x-2 drag-item">
-              <input type="hidden" name="business[categories_order][]" value={b_category.index} />
+              <input type="hidden" name="product[categories_order][]" value={b_category.index} />
 
               <.input
                 type="select"
@@ -44,7 +45,7 @@ defmodule BankooWeb.ProductLive.FormComponent do
               <label class="cursor-pointer">
                 <input
                   type="checkbox"
-                  name="business[categories_delete][]"
+                  name="product[categories_delete][]"
                   value={b_category.index}
                   class="hidden"
                 />
@@ -55,7 +56,7 @@ defmodule BankooWeb.ProductLive.FormComponent do
         </div>
         <:actions>
           <label class="block cursor-pointer">
-            <input type="checkbox" name="business[categories_order][]" class="hidden" />
+            <input type="checkbox" name="product[categories_order][]" class="hidden" />
             <.icon name="hero-plus-circle" /> add more
           </label>
         </:actions>
@@ -75,7 +76,8 @@ defmodule BankooWeb.ProductLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign_categories()}
   end
 
   defp assign_categories(socket) do

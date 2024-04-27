@@ -11,6 +11,14 @@
 <.list>
   <:item title="Title"><%= @product.title %></:item>
   <:item title="Description"><%= @product.description %></:item>
+  <:item title="Categories">
+    <%= for cat <- @product.categories do %>
+      <span class="text-xs text-gray-500 font-medium inline-flex px-2 py-0.5 bg-gray-100 rounded-md m-1 whitespace-nowrap">
+        <%= cat.title %>
+      </span>
+      <br />
+    <% end %>
+  </:item>
   <:item title="Price"><%= @product.price %></:item>
   <:item title="Views"><%= @product.views %></:item>
 </.list>
