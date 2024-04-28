@@ -11,16 +11,19 @@ defmodule BankooWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :fetch_current_cart
   end
 
   alias Bankoo.ShoppingCart
 
   defp fetch_current_cart(conn, _opts) do
-    if cart = ShoppingCart.get_cart_by_user_id(conn.assigns.current_user) do
-      assign(conn, :cart, cart)
-    else
-      {:ok, new_cart} = ShoppingCart.create_cart(conn.assigns.current_user)
-      assign(conn, :cart, new_cart)
+    if user = conn.assigns[:current_user] do
+      if cart = ShoppingCart.get_cart_by_user_id(user.id) do
+        assign(conn, :cart, cart)
+      else
+        {:ok, new_cart} = ShoppingCart.create_cart(user.id)
+        assign(conn, :cart, new_cart)
+      end
     end
   end
 
@@ -101,7 +104,13 @@ defmodule BankooWeb.Router do
 
       live "/categories/:id", CategoryLive.Show, :show
       live "/categories/:id/show/edit", CategoryLive.Show, :edit
+
     end
+
+    resources "/cart_items", CartItemController, only: [:create]
+
+    get "/cart", CartController, :show
+    put "/cart", CartController, :edit
   end
 
   scope "/", BankooWeb do

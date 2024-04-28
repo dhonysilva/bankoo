@@ -6,6 +6,9 @@
       <.button>Edit product</.button>
     </.link>
   </:actions>
+  <.link href={~p"/cart_items?product_id=#{@product.id}"} method="post">
+    <.button>Add to Cart</.button>
+  </.link>
 </.header>
 
 <.list>
