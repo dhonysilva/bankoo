@@ -110,7 +110,7 @@ defmodule BankooWeb.Router do
     resources "/cart_items", CartItemController, only: [:create]
 
     get "/cart", CartController, :show
-    put "/cart", CartController, :edit
+    put "/cart", CartController, :update
   end
 
   scope "/", BankooWeb do
