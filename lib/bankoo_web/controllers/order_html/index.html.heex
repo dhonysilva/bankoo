@@ -1,0 +1,15 @@
+<.header>
+  Listing Orders
+</.header>
+
+<.table id="orders" rows={@orders} row_click={&JS.navigate(~p"/orders/#{&1}")}>
+  <:col :let={order} label="Order"><%= order.id %></:col>
+  <:col :let={order} label="Total Price"><%= order.total_price %></:col>    
+
+  <:action :let={order}>
+    <div class="sr-only">
+      <.link navigate={~p"/orders/#{order}"}>Show</.link>
+    </div>
+  </:action>
+  
+</.table>

@@ -17,6 +17,11 @@ defmodule BankooWeb.OrderController do
     end
   end
 
+  def index(conn, _) do
+    orders = Orders.list_orders()
+    render(conn, :index, orders: orders)
+  end
+
   def show(conn, %{"id" => id}) do
     user = conn.assigns[:current_user]
 
