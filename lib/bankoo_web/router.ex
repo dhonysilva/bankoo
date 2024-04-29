@@ -24,6 +24,8 @@ defmodule BankooWeb.Router do
         {:ok, new_cart} = ShoppingCart.create_cart(user.id)
         assign(conn, :cart, new_cart)
       end
+    else
+      conn
     end
   end
 

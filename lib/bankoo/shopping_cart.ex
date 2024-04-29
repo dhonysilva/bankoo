@@ -39,10 +39,10 @@ defmodule Bankoo.ShoppingCart do
   """
   def get_cart!(id), do: Repo.get!(Cart, id)
 
-  def get_cart_by_user_id(user_id) do
+  def get_cart_by_user_id(user) do
     Repo.one(
       from(c in Cart,
-      where: c.user_id == ^user_id,
+      where: c.user_id == ^user,
       left_join: i in assoc(c, :items),
       left_join: p in assoc(i, :product),
       order_by: [asc: i.inserted_at],
@@ -108,6 +108,11 @@ defmodule Bankoo.ShoppingCart do
       |> total_item_price()
       |> Decimal.add(acc)
     end)
+  end
+
+  def prune_cart_items(%Cart{} = cart) do
+    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
+    {:ok, reload_cart(cart)}
   end
   @doc """
   Updates a cart.
