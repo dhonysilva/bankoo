@@ -27,6 +27,10 @@
     <div class="sr-only">
       <.link navigate={~p"/products/#{product}"}>Show</.link>
     </div>
+    <.link href={~p"/cart_items?product_id=#{product.id}"} method="post">
+      Add to Cart
+    </.link>
+
     <.link patch={~p"/products/#{product}/edit"}>Edit</.link>
   </:action>
   <:action :let={{id, product}}>
