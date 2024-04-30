@@ -11,6 +11,22 @@ defmodule BankooWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_user
+    plug :fetch_current_cart
+  end
+
+  alias Bankoo.ShoppingCart
+
+  defp fetch_current_cart(conn, _opts) do
+    if user = conn.assigns[:current_user] do
+      if cart = ShoppingCart.get_cart_by_user_id(user.id) do
+        assign(conn, :cart, cart)
+      else
+        {:ok, new_cart} = ShoppingCart.create_cart(user.id)
+        assign(conn, :cart, new_cart)
+      end
+    else
+      conn
+    end
   end
 
   pipeline :api do
@@ -76,7 +92,29 @@ defmodule BankooWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       live "/transactions", TransactionLive.Index
+
+      live "/products", ProductLive.Index, :index
+      live "/products/new", ProductLive.Index, :new
+      live "/products/:id/edit", ProductLive.Index, :edit
+
+      live "/products/:id", ProductLive.Show, :show
+      live "/products/:id/show/edit", ProductLive.Show, :edit
+
+      live "/categories", CategoryLive.Index, :index
+      live "/categories/new", CategoryLive.Index, :new
+      live "/categories/:id/edit", CategoryLive.Index, :edit
+
+      live "/categories/:id", CategoryLive.Show, :show
+      live "/categories/:id/show/edit", CategoryLive.Show, :edit
+
     end
+
+    resources "/cart_items", CartItemController, only: [:create]
+
+    get "/cart", CartController, :show
+    put "/cart", CartController, :update
+
+    resources "/orders", OrderController, only: [:create, :show, :index]
   end
 
   scope "/", BankooWeb do
