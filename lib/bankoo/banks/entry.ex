@@ -18,4 +18,10 @@ defmodule Bankoo.Banks.Entry do
     |> cast(attrs, [:user_id, :type, :amount])
     |> validate_required([:user_id, :type, :amount])
   end
+
+  def new(transaction) do
+    %__MODULE__{}
+    |> change()
+    |> put_assoc(:transaction, transaction)
+  end
 end

@@ -2,9 +2,13 @@ defmodule Bankoo.Banks.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Bankoo.Banks.Entry
+
   schema "transactions" do
 
     belongs_to :user, Bankoo.Accounts.User
+
+    has_many :entries, Entry
 
     timestamps(type: :utc_datetime)
   end

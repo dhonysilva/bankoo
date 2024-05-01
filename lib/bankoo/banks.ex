@@ -6,7 +6,9 @@ defmodule Bankoo.Banks do
   import Ecto.Query, warn: false
   alias Bankoo.Repo
 
+  alias Bankoo.Banks
   alias Bankoo.Banks.Transaction
+  alias Bankoo.Banks.Entry
 
   @doc """
   Returns the list of transactions.
@@ -55,6 +57,13 @@ defmodule Bankoo.Banks do
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
     |> Transaction.changeset(attrs)
+    |> Repo.insert()
+    # |> create_entry()
+  end
+
+  def create_entry() do
+    %Entry{user_id: 1, type: :credit, amount: 10}
+    |> Entry.changeset()
     |> Repo.insert()
   end
 
@@ -105,7 +114,7 @@ defmodule Bankoo.Banks do
     Transaction.changeset(transaction, attrs)
   end
 
-  alias Bankoo.Banks.Entry
+
 
   @doc """
   Returns the list of entries.
@@ -148,11 +157,11 @@ defmodule Bankoo.Banks do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_entry(attrs \\ %{}) do
-    %Entry{}
-    |> Entry.changeset(attrs)
-    |> Repo.insert()
-  end
+  # def create_entry(attrs \\ %{}) do
+  #   %Entry{}
+  #   |> Entry.changeset(attrs)
+  #   |> Repo.insert()
+  # end
 
   @doc """
   Updates a entry.
